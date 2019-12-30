@@ -1,0 +1,23 @@
+---
+
+helm_arch_lookup:
+  x86:
+    arch: 386
+  amd64:
+    arch: amd64
+  x86_64:
+    arch: amd64
+  arm64:
+    arch: arm64
+  aarch64:
+    arch: arm64
+  arm:
+    arch: arm
+  arm7:
+    arch: arm
+  armv7l:
+    arch: arm
+  armhf:
+    arch: arm
+
+helm_release_baseurl: https://get.helm.sh

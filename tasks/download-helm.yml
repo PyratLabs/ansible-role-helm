@@ -1,0 +1,16 @@
+---
+
+- name: Ensure the helm_arch fact is set
+  set_fact:
+    helm_arch: "{{ helm_arch_lookup[ansible_architecture].arch }}"
+  when: helm_arch is not defined
+
+- name: Get the archive path for helm
+  set_fact:
+    helm_archive_path: "helm-v{{ helm_version }}-linux-{{ helm_arch }}.tar.gz"
+
+- name: Ensure helm archive is downloaded
+  get_url:
+    url: "{{ helm_release_baseurl }}/{{ helm_archive_path }}"
+    dest: "/tmp/helm-{{ helm_version }}.tar.gz"
+    mode: 0600

@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    helm_install_os_dependencies: true
+    helm_install_dir: /opt/helm/bin
+    helm_projects_dir: /opt/helm/projects
+    helm_projects:
+      - name: elastic-helm-charts
+        repo: https://github.com/elastic/helm-charts
+  roles:
+    - role: xanmanning.helm

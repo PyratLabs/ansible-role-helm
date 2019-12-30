@@ -1,0 +1,31 @@
+---
+
+- name: Check the state of the new Helm package
+  stat:
+    path: "{{ helm_install_dir }}/helm"
+  register: helm_check_installed
+
+- name: Fail play if helm is not installed as expected
+  assert:
+    that:
+      - helm_check_installed.stat.exists
+      - helm_check_installed.stat.islnk
+    fail_msg: helm was not installed as expected, it is likely something went wrong.
+    success_msg: helm has been installed as expected.
+
+- name: Check the Helm binary version matches the expected version
+  shell: >
+    set -o pipefail && \
+      {{ helm_install_dir }}/helm version  --short | sed 's/v\(.*\)+.*/\1/'
+  args:
+    executable: "{{ helm_check_bash_path.stdout_lines[0] }}"
+  changed_when: false
+  failed_when: false
+  register: helm_check_installed_version
+
+- name: Fail play if Helm is not the expected version
+  assert:
+    that:
+      - helm_check_installed_version.stdout_lines[0] == helm_version
+    fail_msg: Installed helm version is not as expected, it is likely something went wrong.
+    success_msg: Installed helm version is as expected.

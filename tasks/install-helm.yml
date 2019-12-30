@@ -1,0 +1,52 @@
+---
+
+- name: Ensure helm_install_dir exists
+  file:
+    path: "{{ helm_install_dir }}"
+    state: directory
+
+- name: Ensure helm_projects_dir exists
+  file:
+    path: "{{ helm_projects_dir }}"
+    state: directory
+  when: helm_projects_dir is defined and helm_projects_dir
+
+- name: Ensure existing Helm package is moved to keep an copy of the old version
+  command: >
+      mv {{ helm_install_dir }}/helm
+      {{ helm_install_dir }}/helm-{{ helm_check_existing_version.stdout_lines[0] }}
+  when:
+    helm_check_existing.stat.islnk is defined
+    and not helm_check_existing.stat.islnk
+    and helm_check_existing_version.stdout_lines[0] != helm_version
+
+- name: Ensure Helm temporary directory exists
+  file:
+    path: /tmp/helm
+    state: directory
+
+- name: Ensure Helm archive is extracted to temporary directory
+  unarchive:
+    src: "/tmp/helm-{{ helm_version }}.tar.gz"
+    dest: "/tmp/helm"
+    remote_src: true
+    mode: 0755
+  when: not helm_check_existing.stat.exists
+        or (helm_check_existing.stat.exists
+            and helm_check_existing_version.stdout_lines[0] != helm_version)
+
+- name: Ensure Helm binary is copied to the installation directory
+  copy:
+    src: "/tmp/helm/linux-{{ helm_arch }}/helm"
+    dest: "{{ helm_install_dir }}/helm-{{ helm_version }}"
+    remote_src: true
+    mode: 0755
+  when: not helm_check_existing.stat.exists
+        or (helm_check_existing.stat.exists
+            and helm_check_existing_version.stdout_lines[0] != helm_version)
+
+- name: Ensure Helm package is symlinked
+  file:
+    src: "{{ helm_install_dir }}/helm-{{ helm_version }}"
+    dest: "{{ helm_install_dir }}/helm"
+    state: link

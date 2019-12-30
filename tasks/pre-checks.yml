@@ -1,0 +1,45 @@
+---
+
+- name: Check Helm version is supported by this role
+  assert:
+    that:
+      - helm_version is version_compare('3.0.0', '>=')
+    fail_msg: This ansible role does not support Helm {{ helm_version }}
+    success_msg: Helm {{ helm_version }} is supported.
+
+- name: Check where bash is installed
+  command: which bash
+  register: helm_check_bash_path
+  failed_when: false
+  changed_when: false
+
+- name: Check that git is installed
+  command: which git
+  register: helm_check_git_installed
+  failed_when: false
+  changed_when: false
+
+- name: Fail play if git is not installed
+  fail:
+    msg: git was not found and is required for downloading projects, please ensure this is installed.
+  when: helm_check_git_installed.rc > 0
+        and helm_projects_dir is defined
+        and helm_projects_dir
+        and helm_projects is defined
+        and helm_projects | length > 0
+        and not helm_install_os_dependencies
+
+- name: Check for existing Helm binary
+  stat:
+    path: "{{ helm_install_dir }}/helm"
+  register: helm_check_existing
+
+- name: Check Helm binary version if binary already exists
+  shell: >
+    set -o pipefail && \
+      {{ helm_install_dir }}/helm version --short | sed 's/v\(.*\)+.*/\1/'
+  args:
+    executable: "{{ helm_check_bash_path.stdout_lines[0] }}"
+  changed_when: false
+  register: helm_check_existing_version
+  when: helm_check_existing.stat.exists

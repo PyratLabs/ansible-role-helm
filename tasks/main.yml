@@ -1,0 +1,20 @@
+---
+
+- import_tasks: get-version.yml
+  when: helm_version is not defined or not helm_version
+
+- import_tasks: pre-checks.yml
+
+- include_tasks: "{{ ansible_os_family | lower }}/install-os-dependencies.yml"
+  when: helm_install_os_dependencies is defined
+        and helm_install_os_dependencies
+
+- import_tasks: download-helm.yml
+
+- import_tasks: install-helm.yml
+
+- import_tasks: download-projects.yml
+  when: helm_projects is defined
+        and helm_projects | length >= 1
+
+- import_tasks: post-checks.yml

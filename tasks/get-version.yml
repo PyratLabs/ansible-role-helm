@@ -1,0 +1,12 @@
+---
+
+- name: Get the version information of the latest release of Helm
+  uri:
+    url: https://api.github.com/repos/helm/helm/releases/latest
+    return_content: true
+    body_format: json
+  register: helm_get_latest_version
+
+- name: Ensure the helm_version variable is set
+  set_fact:
+    helm_version: "{{ helm_get_latest_version.json.tag_name | regex_replace('^v', '') }}"
