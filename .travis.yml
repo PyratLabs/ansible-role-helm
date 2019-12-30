@@ -7,7 +7,7 @@ services: docker
 
 env:
   global:
-    - ROLE_NAME: kubectl
+    - ROLE_NAME: helm
   matrix:
     # Local user install
     - MOLECULE_DISTRO: centos7
