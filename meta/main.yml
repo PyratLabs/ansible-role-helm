@@ -2,7 +2,7 @@
 galaxy_info:
   role_name: helm
   author: Xan Manning
-  description: Ansible Role to install helm on a system
+  description: Ansible Role to install Helm on a system
   company: Pyrat Ltd.
 
   # If the issue tracker for your role is not on github, uncomment the

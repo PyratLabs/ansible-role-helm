@@ -14,3 +14,8 @@
         name: k8suser
         group: user
         state: present
+
+    - name: Ensure tar is installed
+      package:
+        name: tar
+        state: present
