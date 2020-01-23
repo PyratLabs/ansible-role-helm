@@ -21,3 +21,4 @@ helm_arch_lookup:
     arch: arm
 
 helm_release_baseurl: https://get.helm.sh
+helm_github_api: https://api.github.com/repos/helm/helm

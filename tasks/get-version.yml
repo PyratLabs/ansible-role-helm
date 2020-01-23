@@ -2,7 +2,7 @@
 
 - name: Get the version information of the latest release of Helm
   uri:
-    url: https://api.github.com/repos/helm/helm/releases/latest
+    url: "{{ helm_github_api }}/releases/latest"
     return_content: true
     body_format: json
   register: helm_get_latest_version
