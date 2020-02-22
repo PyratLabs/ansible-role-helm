@@ -83,7 +83,7 @@ helm_projects:
 
 ## License
 
-BSD
+[BSD 3-clause](LICENSE.txt)
 
 ## Author Information
 
